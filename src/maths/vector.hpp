@@ -82,7 +82,9 @@ class Vector3
 public:
     T x_, y_, z_;
 
-    Vector3<T>(T x = 0, T y = 0, T z = 0) : x_(x), y_(y), z_(z) {}
+    Vector3<T>() : Vector3(0, 0, 0) {}
+    Vector3<T>(T x, T y, T z) : x_(x), y_(y), z_(z) {}
+    Vector3<T>(T value) : x_(value), y_(value), z_(value) {}
     Vector3<T>(const Vector3<T>& v) : x_(v.x_), y_(v.y_), z_(v.z_) {}
     Vector3<T>& operator = (const Vector3<T>& v)
     {
@@ -151,7 +153,7 @@ typedef Vector3<float> Vec3f;
 typedef Vector3<double> Vec3d;
 typedef Vector3<float> Pos3f;
 typedef Vector3<double> Pos3d;
-typedef Vector3<float> Color;
+typedef Vector3<unsigned char> Color;
 
 template <typename T>
 class Vector4

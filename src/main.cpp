@@ -2,38 +2,50 @@
 
 #include "vector.hpp"
 #include "matrix.hpp"
+#include "vertex.h"
+#include "mesh.h"
+#include "framebuffer.h"
+#include "camera.h"
+#include "renderer.h"
 
-#include "vertex.hpp"
-#include "mesh.hpp"
+Camera camera(Vec3f(0, 2, -5), Vec3f(0, 0, 0), Vec3f(0, 1, 0), 1.5f);
+Framebuffer fb(800, 600);
 
-#include "buffer.hpp"
-#include "camera.hpp"
-
-void DrawTriangle(const Camera& cam, const Mesh& mesh)
-{
-    Mat4 model_mat = Matrix::Identity;
-    Mat4 view_mat = lookAt(cam.pos_, cam.center_, cam.up_);
-    for(int i = 0; i < 3; ++i)
-    {
-        Vertex view_vertex;
-        Vector4<float> vec;
-        vec = view_mat * model_mat * Vector4<float>(mesh.vertices_[mesh.indices_[i]].pos, 1.0f);
-        std::cout << vec;
-    }
-}
+Renderer renderer;
 
 int main()
 {
 
-    Camera camera(Vec3f(0, 2, -5), Vec3f(0, 0, 0), Vec3f(0, 1, 0), 1.5f);
-    
+    renderer.attach_framebuffer(fb);
+
     Mesh m;
 
     Vertex v0(-1, 1, 0), v1(1, 1, 0), v2(0, -1, 0);
-    m.vertices_.push_back(v0), m.vertices_.push_back(v1), m.vertices_.push_back(v2);
-    m.indices_.push_back(0), m.indices_.push_back(1), m.indices_.push_back(2);
+    m.add_vertex(v0), m.add_vertex(v1), m.add_vertex(v2);
+    m.add_index(0), m.add_index(1), m.add_index(2);
+
+    SubMesh sub_mesh;
+    sub_mesh.mesh = &m;
+
     
-    DrawTriangle(camera, m);
+    
+    FILE *fp = fopen("binary.ppm", "wb");
+    fprintf(fp, "P6\n%d %d\n255\n", 800, 600);
+
+    for (int x = 600 - 1; x >= 0; x--) {
+        for (int y = 0; y < 800; y++) {
+            int index = x * 800 + y;
+            unsigned char color[3];
+
+            color[0] = fb.get_color(index).x_;
+            color[1] = fb.get_color(index).y_;
+            color[2] = fb.get_color(index).z_;
+
+            fwrite(color, 1, 3, fp);
+        }
+    }
+    fclose(fp);
+
 
 
     return 0;

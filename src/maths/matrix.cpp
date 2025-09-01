@@ -46,8 +46,11 @@ Matrix translate(const Matrix& mat, const Vector3<float>& v)
     return result_mat;
 }
 
+// TODO
 Matrix perspective(float fovy, float aspect, float near, float far)
 {
     Matrix result_mat;
+
+    return result_mat;
 }
 
