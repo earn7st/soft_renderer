@@ -153,7 +153,7 @@ typedef Vector3<float> Vec3f;
 typedef Vector3<double> Vec3d;
 typedef Vector3<float> Pos3f;
 typedef Vector3<double> Pos3d;
-typedef Vector3<unsigned char> Color;
+typedef Vector3<uint8_t> RGB;
 
 template <typename T>
 class Vector4
@@ -187,5 +187,6 @@ typedef Vector4<int> Vec4i;
 typedef Vector4<unsigned int> Vec4u;
 typedef Vector4<float> Vec4f;
 typedef Vector4<double> Vec4d;
+typedef Vector4<uint8_t> RGBA;
 
 #endif

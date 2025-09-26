@@ -7,28 +7,17 @@
 #include "framebuffer.h"
 #include "camera.h"
 #include "renderer.h"
+#include "engine.h"
 
 Camera camera(Vec3f(0, 2, -5), Vec3f(0, 0, 0), Vec3f(0, 1, 0), 1.5f);
-Framebuffer fb(800, 600);
-
-Renderer renderer;
-
 int main()
 {
+    srand(time(nullptr));
+    Engine engine;
 
-    renderer.attach_framebuffer(fb);
-
-    Mesh m;
-
-    Vertex v0(-1, 1, 0), v1(1, 1, 0), v2(0, -1, 0);
-    m.add_vertex(v0), m.add_vertex(v1), m.add_vertex(v2);
-    m.add_index(0), m.add_index(1), m.add_index(2);
-
-    SubMesh sub_mesh;
-    sub_mesh.mesh = &m;
-
-    
-    
+    if(engine.start_up() < 0) return -1;
+    engine.run();
+    /*    
     FILE *fp = fopen("binary.ppm", "wb");
     fprintf(fp, "P6\n%d %d\n255\n", 800, 600);
 
@@ -45,7 +34,7 @@ int main()
         }
     }
     fclose(fp);
-
+    */
 
 
     return 0;

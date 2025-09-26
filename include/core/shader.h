@@ -2,38 +2,33 @@
 #define __SHADER_H__
 
 #include "vector.hpp"
+#include "uniforms.h"
+#include "vertex.h"
 
-struct VertexInput
-{
-
-};
-
-struct VertexOutput
-{
-
-};
+#include <functional>
 
 struct FragmentInput
 {
 
 };
 
-struct FragmenOutput
-{
+typedef std::function<void(Vertex&, const Uniforms&)> VertexShader;
+typedef std::function<Vec3f(const FragmentInput&, const Uniforms&)> FragmentShader;
 
-};
-
-using VertexShader = std::function<VertexOutput(const VertexInput&, const Uniforms&)>;
-using FragmentShader = std::function<Vec4f(const FragmentInput, const Uniforms&)>;
+void blinn_phong_vertex_shader(Vertex& input, const Uniforms& uniforms);
+Vec3f blinn_phong_fragment_shader(const FragmentInput& input, const Uniforms& uniforms);
 
 class Shader
 {
 public:
     Shader() = default;
-    
+
+    void execute_vertex_shader(Vertex& input, const Uniforms& uniforms);
+    Vec3f execute_fragment_shader(const FragmentInput& input, const Uniforms& uniforms);
+
 private:
-    VertexShader vertex_shader_;
-    FragmentShader fragment_shader_;
+    VertexShader vertex_shader_ = blinn_phong_vertex_shader;
+    FragmentShader fragment_shader_ = blinn_phong_fragment_shader;
 };
 
 #endif

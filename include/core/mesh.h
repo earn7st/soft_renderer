@@ -1,28 +1,43 @@
-#ifndef __MESH_HPP__
-#define __MESH_HPP__
+#ifndef __MESH_H__
+#define __MESH_H__
 
 #include "vertex.h"
 
-class Mesh
+struct Mesh
 {
-public:
-    Mesh() = default;
+    uint32_t num_vertices = 0;
+    std::vector<Vec3f> vertices;
+    std::vector<Vec3f> normals;
+    std::vector<Vec2f> texcoords;
 
-    uint32_t get_num_faces() const { return num_faces_; }
-
-    const std::vector<Vertex>& get_vertices() const { return vertices_; }
-    const std::vector<uint32_t>& get_indices() const { return indices_; }
-
-    // For Test
-    void add_vertex(Vertex& vertex) { vertices_.push_back(vertex); }
-    void add_index(uint32_t index) { indices_.push_back(index); }
-
-private:
-    std::vector<Vertex> vertices_;
-    std::vector<uint32_t> indices_;
-
-    uint32_t num_faces_;
+    uint32_t num_faces = 0;
+    std::vector<uint32_t> vertex_indices;
+    std::vector<uint32_t> normal_indices;
+    std::vector<uint32_t> texcoord_indices;
 };
 
+/*
+// TODO vertices expansion when draw_call
+struct ProcessedMesh
+{
+    void initialize(const Mesh& mesh)
+    {
+        num_vertices = mesh.num_vertices;
+        for(auto it = mesh.vertices.begin(); it != mesh.vertices.end(); ++it)
+        {
+            vertices.push_back(Vec4f(*it, 1.0f));
+        }
+        normals.assign(mesh.normals.begin(), mesh.normals.end());
+        processed_vertices.assign(num_vertices, false); 
+        processed_normals.assign(num_vertices, false);
+    }
+
+    uint32_t num_vertices = 0;
+    std::vector<Vec4f> vertices;
+    std::vector<Vec3f> normals;
+    std::vector<bool> processed_vertices;
+    std::vector<bool> processed_normals;
+};
+*/
 
 #endif

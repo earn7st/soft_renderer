@@ -71,6 +71,7 @@ Matrix transpose(const Matrix&);
 Matrix scale(const Matrix&, const double, const double, const double);
 Matrix translate(const Matrix&, const Vector3<double>&);
 Matrix translate(const Matrix&, const Vector3<float>&);
+Matrix ortho(float width, float height, float near, float far);
 Matrix perspective(float fovy, float aspect, float near, float far);
 
 template <typename T>

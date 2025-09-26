@@ -1,5 +1,10 @@
 #include "resource_manager.h"
 
+bool ResourceManager::initialize()
+{
+    return true;
+}
+
 void ResourceManager::load_mesh(const Mesh& mesh)
 {
     meshes_.push_back(mesh);

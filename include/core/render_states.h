@@ -9,11 +9,18 @@ enum PolygonMode {
     FILL
 };
 
+enum ShaderType
+{
+    BLINN_PHONG,
+    PBR
+};
+
 struct RenderStates
 {
     Framebuffer* pTarget_framebuffer;
-
     PolygonMode polygon_mode;
+
+    ShaderType shader_type;
 };
 /*
 参考 by deepseek

@@ -1,48 +1,42 @@
 #ifndef __RENDERER_H__
 #define __RENDERER_H__
 
+#include <functional>
+
 #include "mesh.h"
 #include "framebuffer.h"
 #include "camera.h"
 #include "scene.h"
 #include "render_states.h"
 #include "uniforms.h"
+#include "shader.h"
+#include "vertex.h"
 
 class Renderer
 {
 public:
     Renderer() = default;
 
-    void initialize();
+    bool initialize(Framebuffer&);
+    bool attach_framebuffer(Framebuffer&);
 
-    void attach_framebuffer(Framebuffer&);
+    void render(const Scene&);
+    void draw_model(const Model&);   // For Test
+    void draw_sub_mesh(const SubMesh&); // For Test
 
-    void draw_sub_mesh(const Camera&, const SubMesh&); // For Test
-    void draw_model(const Camera&, const Model&);   // For Test 
-    void draw_scene(const Camera&, const Scene&);
+    void update_per_frame_uniforms(const Camera&);   // call when frame start
+    void update_per_model_uniforms(const Model&);    // call when drawing model
+    void update_per_sub_mesh_uniforms(const SubMesh&);
 
-    // TODO 帧的概念
-    /*
-    void begin_frame(float deltaTime) {
-        // 更新时间
-        m_time += deltaTime;
-        
-        // 更新PerFrame Uniforms（每帧一次）
-        update_per_frame_uniforms(deltaTime);
-    }
-    */
-    void update_per_model_uniform(const Model&);    // 每个模型渲染前调用
-    void update_per_frame_uniform(const Camera&);   // 每帧开始时调用
-
+    // pipeline
+    void draw_call(const Mesh& mesh, uint32_t offset, uint32_t size, const Material& material);
     void rasterize();
 
 
 private:
-
     RenderStates render_states_;
-
-    PerFrameUniform per_frame_uniform_;
-    PerModelUniform per_model_uniform_;
+    Uniforms uniforms_;
+    Shader shader_;
 };
 
 #endif

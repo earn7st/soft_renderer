@@ -9,14 +9,9 @@
 class ResourceManager
 {
 public:
-    static ResourceManager* s_instance;  
-
-    static ResourceManager& get_instance() {
-        if (!s_instance) s_instance = new ResourceManager();
-        return *s_instance;
-    }
-
     ResourceManager() = default;
+
+    bool initialize();
 
     void load_mesh(const Mesh& mesh);
     void load_material(const Material& material);

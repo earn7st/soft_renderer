@@ -1,5 +1,8 @@
 #include "matrix.hpp"
 
+#include <cmath>
+#include "constant.h"
+
 Matrix Matrix::Identity(
     1, 0, 0, 0,
     0, 1, 0, 0,
@@ -46,11 +49,40 @@ Matrix translate(const Matrix& mat, const Vector3<float>& v)
     return result_mat;
 }
 
-// TODO
-Matrix perspective(float fovy, float aspect, float near, float far)
+Matrix ortho(float width, float height, float near, float far)
 {
-    Matrix result_mat;
-
-    return result_mat;
+    // frustum is always centered : r = -l, t = -b
+    Matrix ortho_translate_mat
+    {
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, -(near + far)/2,
+        0, 0, 0, 1
+    };
+    Matrix ortho_scale_mat
+    {
+        2/ width, 0, 0, 0,
+        0, 2 / height, 0, 0,
+        0, 0, 2 / (near - far), 0,
+        0, 0, 0, 1
+    };
+    return ortho_scale_mat * ortho_translate_mat;
 }
 
+Matrix perspective(float fovy, float aspect, float near, float far)
+{
+    Matrix perspective_to_ortho_mat
+    {
+        near, 0, 0, 0,
+        0, near, 0, 0,
+        0, 0, near + far, -near * far,
+        0, 0, 1, 0
+    };
+
+    float radian_fovy = fovy * PI / 180.0;
+    float height = near * tan(radian_fovy / 2) * 2;
+
+    Matrix ortho_mat = ortho(height * aspect, height, near, far);
+
+    return ortho_mat * perspective_to_ortho_mat;
+}
