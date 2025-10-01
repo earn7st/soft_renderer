@@ -3,8 +3,9 @@
 
 #include <string>
 
-#include "mesh.h"
 #include "material.h"
+#include "mesh.h"
+#include "model.h"
 
 class ResourceManager
 {
@@ -15,8 +16,11 @@ public:
 
     void load_mesh(const Mesh& mesh);
     void load_material(const Material& material);
-    
-    void load_model_by_file_name(const std::string& file_name);
+
+    const Mesh& get_mesh(int i);
+    const Mesh* get_pMesh(int i);
+
+    const std::vector<Mesh>& get_meshes() { return meshes_; }
 
 private:
     std::vector<Mesh> meshes_;

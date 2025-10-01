@@ -2,33 +2,41 @@
 #define __SHADER_H__
 
 #include "vector.hpp"
-#include "uniforms.h"
+#include "uniform.h"
 #include "vertex.h"
 
 #include <functional>
 
-struct FragmentInput
+struct Varying
 {
-
+    Vec4f clip_pos;
+    Vec4f world_pos;
+    Vec4f world_normal;
+    Vec2f texcoord;
 };
 
-typedef std::function<void(Vertex&, const Uniforms&)> VertexShader;
-typedef std::function<Vec3f(const FragmentInput&, const Uniforms&)> FragmentShader;
+typedef Varying VertexOut;
+typedef Varying FragmentIn;
 
-void blinn_phong_vertex_shader(Vertex& input, const Uniforms& uniforms);
-Vec3f blinn_phong_fragment_shader(const FragmentInput& input, const Uniforms& uniforms);
+typedef std::function<VertexOut(const Vertex&, const Uniform&)> VertexShader;
+typedef std::function<RGBA(const FragmentIn&, const Uniform&)> FragmentShader;
+
+VertexOut default_vertex_shader(const Vertex& input, const Uniform& uniform);
+RGBA blinn_phong_fragment_shader(const FragmentIn& input, const Uniform& uniform);
+RGBA wireframe_fragment_shader(const FragmentIn& input, const Uniform& uniform);
 
 class Shader
 {
 public:
-    Shader() = default;
+    Shader(VertexShader vs = default_vertex_shader, FragmentShader fs = blinn_phong_fragment_shader)
+    : vertex_shader_(vs), fragment_shader_(fs) {}
 
-    void execute_vertex_shader(Vertex& input, const Uniforms& uniforms);
-    Vec3f execute_fragment_shader(const FragmentInput& input, const Uniforms& uniforms);
+    VertexOut execute_vertex_shader(const Vertex& input, const Uniform& uniform) const;
+    RGBA execute_fragment_shader(const FragmentIn& input, const Uniform& uniform) const;
 
 private:
-    VertexShader vertex_shader_ = blinn_phong_vertex_shader;
-    FragmentShader fragment_shader_ = blinn_phong_fragment_shader;
+    VertexShader vertex_shader_;
+    FragmentShader fragment_shader_;
 };
 
 #endif

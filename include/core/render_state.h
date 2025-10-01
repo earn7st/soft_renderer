@@ -1,5 +1,5 @@
-#ifndef __RENDER_STATES_H__
-#define __RENDER_STATES_H__
+#ifndef __RENDER_STATE_H__
+#define __RENDER_STATE_H__
 
 #include "framebuffer.h"
 
@@ -15,16 +15,16 @@ enum ShaderType
     PBR
 };
 
-struct RenderStates
+struct RenderState
 {
     Framebuffer* pTarget_framebuffer;
-    PolygonMode polygon_mode;
+    PolygonMode polygon_mode = LINE;
 
     ShaderType shader_type;
 };
 /*
 参考 by deepseek
-struct RenderStates {
+struct RenderState {
     // 混合状态
     BlendMode blendMode = BlendMode::None;
     glm::vec4 blendColor = glm::vec4(0.0f);

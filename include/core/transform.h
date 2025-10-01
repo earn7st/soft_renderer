@@ -6,7 +6,7 @@
 
 struct Transform
 {
-    Vec3f translate = Vec3f(0.0f);
+    Vec3f translate = Vec3f(0.f);
     //TODO
     // Quaternions
 };

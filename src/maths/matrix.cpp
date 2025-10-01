@@ -49,9 +49,11 @@ Matrix translate(const Matrix& mat, const Vector3<float>& v)
     return result_mat;
 }
 
+// parameter near and far are coordinates
+// since we look at -z, 0 > near > far
 Matrix ortho(float width, float height, float near, float far)
 {
-    // frustum is always centered : r = -l, t = -b
+    // frustum is always centered : r = -l = width/2, t = -b = height/2s
     Matrix ortho_translate_mat
     {
         1, 0, 0, 0,
@@ -69,6 +71,8 @@ Matrix ortho(float width, float height, float near, float far)
     return ortho_scale_mat * ortho_translate_mat;
 }
 
+// parameter near and far are coordinates
+// negative since we look at -z
 Matrix perspective(float fovy, float aspect, float near, float far)
 {
     Matrix perspective_to_ortho_mat
@@ -80,7 +84,7 @@ Matrix perspective(float fovy, float aspect, float near, float far)
     };
 
     float radian_fovy = fovy * PI / 180.0;
-    float height = near * tan(radian_fovy / 2) * 2;
+    float height = -near * tan(radian_fovy / 2) * 2;
 
     Matrix ortho_mat = ortho(height * aspect, height, near, far);
 

@@ -1,10 +1,12 @@
 #ifndef __CAMERA_H__
 #define __CAMERA_H__
 
-#define DEFAULT_CAMERA_POS Vec3f(0, 0, 5)
+#include "vector.hpp"
+
+#define DEFAULT_CAMERA_POS Vec3f(0, 0, -5)
 #define DEFAULT_CAMERA_CENTER Vec3f(0, 0, 0)
 #define WORLD_UP Vec3f(0, 1, 0)
-#define DEFAULT_CAMERA_ASPECT 1.5f
+#define DEFAULT_CAMERA_ASPECT 1.333f
 #define DEFAULT_CAMERA_FOVY 60.0f
 #define DEFAULT_CAMERA_NEAR_PLANE 0.1f
 #define DEFAULT_CAMERA_FAR_PLANE 10.0f
@@ -31,6 +33,8 @@ public:
     float get_fovy() const { return fovy_; }
     float get_near_plane() const { return near_plane_; }
     float get_far_plane() const { return far_plane_; }
+
+    void print() const;
 
 private:
     Vec3f pos_ ;

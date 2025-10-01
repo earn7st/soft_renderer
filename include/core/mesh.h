@@ -5,15 +5,12 @@
 
 struct Mesh
 {
+
     uint32_t num_vertices = 0;
-    std::vector<Vec3f> vertices;
-    std::vector<Vec3f> normals;
-    std::vector<Vec2f> texcoords;
+    std::vector<Vertex> vertices;
 
     uint32_t num_faces = 0;
-    std::vector<uint32_t> vertex_indices;
-    std::vector<uint32_t> normal_indices;
-    std::vector<uint32_t> texcoord_indices;
+    std::vector<uint32_t> indices;
 };
 
 /*

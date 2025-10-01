@@ -1,5 +1,6 @@
 #include "renderer.h"
 #include "shader.h"
+#include "print.hpp"
 
 uint32_t cnt = 0;
 
@@ -17,7 +18,15 @@ bool Renderer::attach_framebuffer(Framebuffer& fb)
 {
     if(fb.is_valid())
     {
-        render_states_.pTarget_framebuffer = &fb;
+        render_state_.pTarget_framebuffer = &fb;
+        uniform_.screen_width = fb.get_width();
+        uniform_.screen_height = fb.get_height();
+        float width = static_cast<float>(uniform_.screen_width);
+        float height = static_cast<float>(uniform_.screen_height);
+        uniform_.viewport_matrix = Matrix(width/2, 0, 0, width/2,
+                                            0, height/2, 0, height/2,
+                                            0, 0, 1, 0,
+                                            0, 0, 0, 1);
         return true;
     }
     return false;
@@ -27,7 +36,7 @@ bool Renderer::attach_framebuffer(Framebuffer& fb)
 void Renderer::render(const Scene& scene)
 {
     const Camera& camera = scene.get_main_camera();
-    update_per_frame_uniforms(camera);
+    update_per_frame_uniform(camera);
 
     const std::vector<Model>& models = scene.get_models();
     for(auto it = models.begin(); it != models.end(); ++it)
@@ -40,7 +49,7 @@ void Renderer::render(const Scene& scene)
 
 void Renderer::draw_model(const Model& model)
 {
-    update_per_model_uniforms(model);
+    update_per_model_uniform(model);
 
     const Mesh* pMesh = model.get_pMesh();
 
@@ -48,64 +57,68 @@ void Renderer::draw_model(const Model& model)
     for(auto it = sub_meshes.begin(); it != sub_meshes.end(); ++it)
     {
         const SubMesh& sub_mesh = *it;
-        update_per_sub_mesh_uniforms(sub_mesh);
+        update_per_sub_mesh_uniform(sub_mesh);
 
-        const Material* pMaterial = model.get_pMaterial(sub_mesh.material_index);
-        draw_call(*pMesh, sub_mesh.mesh_index_offset, sub_mesh.mesh_size, *pMaterial);
+        // TODO: Material
+        // const Material* pMaterial = model.get_pMaterial(sub_mesh.material_index);
+        // draw_call(*pMesh, sub_mesh.mesh_index_offset, sub_mesh.mesh_size, *pMaterial);
+
+        // TODO: set per-sub_mesh material info to uniform;
+        Uniform uniform = uniform_;
+        draw_call(*pMesh, sub_mesh.offset, sub_mesh.size, uniform);
     }
 
 }
 
-// Geometry Stage :
-// Model & View Transformation
-// Vertex Shading
-// Projection Transformation
-// Clipping
-// Screen Mapping
-// Rasterization Stage :
-// Triangle Traversal
-// Pixel/Fragment Shading
-// Merging  
-void Renderer::draw_call(const Mesh& mesh, uint32_t offset, uint32_t size, const Material& material)
+void Renderer::draw_call(const Mesh& mesh, uint32_t offset, uint32_t size, const Uniform& uniform)
 {
+    //std::cout << "Renderer::draw_call(): offset = " << offset << ", size = " << size << std::endl;
     if(size % 3 != 0){
         std::cerr << "Renderer::draw_call(): Size cannot divided by 3!\n";
         return ;
     }
-    for (int i = offset; i < offset + size; ++i)
+    for (uint32_t i = offset; i < offset + size; i += 3)
     {
-        int tri_cnt = 3;
-        while(--tri_cnt)
-        {
-            Vec4f pos = Vec4f(mesh.vertices[mesh.vertex_indices[i]], 1.0f);
-            Vec4f normal = Vec4f(mesh.normals[mesh.normal_indices[i]], 1.0f);
-            Vec2f texcoord = mesh.texcoords[mesh.texcoord_indices[i]];
-            Vertex v(pos, normal, texcoord);
+        const Vertex& ori_v0 = mesh.vertices[mesh.indices[i]];
+        const Vertex& ori_v1 = mesh.vertices[mesh.indices[i + 1]];
+        const Vertex& ori_v2 = mesh.vertices[mesh.indices[i + 2]];
 
-        }
+        Varying v0 = shader_.execute_vertex_shader(ori_v0, uniform_);
+        Varying v1 = shader_.execute_vertex_shader(ori_v1, uniform_);
+        Varying v2 = shader_.execute_vertex_shader(ori_v2, uniform_);
+
+        std::cout << v0.clip_pos << " " << v1.clip_pos << " " << v2.clip_pos << std::endl;
+
+        // (Optional) Geometry Shading
+        // (Optional) Culling
+        // (Optional) Clipping
+
+        // Rasterization : Perspective Division, Screen Mapping, rasterizing
+        rasterizer_.rasterize(v0, v1, v2, shader_, render_state_, uniform);
+
     }
 }
 
-void Renderer::update_per_frame_uniforms(const Camera& camera)
+void Renderer::update_per_frame_uniform(const Camera& camera)
 {
-    uniforms_.view_matrix = lookAt(camera.get_pos(), camera.get_center(), camera.get_up());
-    uniforms_.projection_matrix = perspective(camera.get_fovy(), camera.get_aspect(), camera.get_near_plane(), camera.get_far_plane());
-    uniforms_.VP_matrix = uniforms_.view_matrix * uniforms_.projection_matrix;
-    uniforms_.world_camera_position = camera.get_pos();
+    uniform_.view_matrix = lookAt(camera.get_pos(), camera.get_center(), camera.get_up());
+    uniform_.projection_matrix = perspective(camera.get_fovy(), camera.get_aspect(), -camera.get_near_plane(), -camera.get_far_plane());
+    uniform_.VP_matrix = uniform_.projection_matrix * uniform_.view_matrix;
+    uniform_.world_camera_position = camera.get_pos();
 }
 
 // model transform
-void Renderer::update_per_model_uniforms(const Model& model)
+void Renderer::update_per_model_uniform(const Model& model)
 {
     // TODO
-    uniforms_.model_matrix = Matrix::Identity;
-    uniforms_.MVP_matrix = uniforms_.model_matrix * uniforms_.VP_matrix;
+    uniform_.model_matrix = Matrix::Identity;
+    uniform_.MVP_matrix = uniform_.VP_matrix * uniform_.model_matrix;
 }
 
 // sub-mesh local transform
-void Renderer::update_per_sub_mesh_uniforms(const SubMesh& sub_mesh)
+void Renderer::update_per_sub_mesh_uniform(const SubMesh& sub_mesh)
 {
     // TODO
-    uniforms_.sub_mesh_matrix = Matrix::Identity;
-    //uniforms_.MVP_matrix = uniforms_.sub_mesh_matrix * uniforms_.MVP_matrix;
+    uniform_.sub_mesh_matrix = Matrix::Identity;
+    //uniform_.MVP_matrix = uniform_.sub_mesh_matrix * uniform_.MVP_matrix;
 }

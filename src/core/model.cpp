@@ -1,5 +1,17 @@
 #include "model.h"
 
+void Model::set_pMesh(const Mesh& mesh)
+{
+    pMesh_ = &mesh;
+    return ;
+}
+void Model::set_pMesh(const Mesh* mesh)
+{
+    pMesh_ = mesh;
+    return ;
+}
+
+
 const Mesh* Model::get_pMesh() const 
 {
     return pMesh_;
@@ -37,4 +49,16 @@ const std::vector<SubMesh>& Model::get_sub_meshes() const
 void Model::add_sub_mesh(SubMesh& submesh)
 {
     sub_meshes_.push_back(submesh);
+}
+
+void Model::print() const 
+{
+    const Mesh& mesh  = *pMesh_;
+    std::cout << mesh.vertices.size() << " " << mesh.indices.size() << std::endl;
+    for(int i = 0; i < sub_meshes_.size(); ++i)
+    {
+        SubMesh sub_mesh = sub_meshes_[i];
+        std::cout << "SubMesh " << i << ":" << std::endl;
+        std::cout << "Offset: " << sub_mesh.offset << " Size:" << sub_mesh.size << std::endl;
+    }
 }

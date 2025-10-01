@@ -109,21 +109,21 @@ inline Matrix lookAt(const Vector3<T>& eye, const Vector3<T>& center, const Vect
     Vector3<T> x_view = normalize(cross(up, z_view));
     Vector3<T> y_view = cross(z_view, x_view);
 
-    Matrix translate_mat(
-        1, 0, 0, -eye.x_,
-        0, 1, 0, -eye.y_,
-        0, 0, 1, -eye.z_,
-        0, 0, 0, 1
-    );
-
     Matrix result_mat(
-        x_view.x_, x_view.y_, x_view.z_, 0,
-        y_view.x_, y_view.y_, y_view.z_, 0,
-        z_view.x_, z_view.y_, z_view.z_, 0,
+        x_view.x_, x_view.y_, x_view.z_, -eye.x_,
+        y_view.x_, y_view.y_, y_view.z_, -eye.y_,
+        z_view.x_, z_view.y_, z_view.z_, -eye.z_,
         0, 0, 0, 1
     );
 
-    return result_mat * translate_mat;
+    // Matrix result_mat(
+    //     x_view.x_, y_view.x_, z_view.x_, -eye.x_,
+    //     x_view.y_, y_view.y_, z_view.y_, -eye.y_,
+    //     x_view.z_, y_view.z_, z_view.z_, -eye.z_,
+    //     0, 0, 0, 1
+    // );
+
+    return result_mat;
 }
 
 typedef Matrix Mat4;

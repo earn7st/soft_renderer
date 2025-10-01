@@ -1,18 +1,18 @@
 #include "shader.h"
-#include "uniforms.h"
+#include "uniform.h"
 
-void Shader::execute_vertex_shader(Vertex& input, const Uniforms& uniforms)
+VertexOut Shader::execute_vertex_shader(const Vertex& input, const Uniform& uniform) const
 {
-    return vertex_shader_(input, uniforms);
+    return vertex_shader_(input, uniform);
 }
 
-Vec3f Shader::execute_fragment_shader(const FragmentInput& input, const Uniforms& uniforms)
+RGBA Shader::execute_fragment_shader(const FragmentIn& input, const Uniform& uniform) const
 {
-    return fragment_shader_(input, uniforms);
+    return fragment_shader_(input, uniform);
 }
 
 /*
-struct Uniforms
+struct Uniform
 {
     Matrix view_matrix = Matrix::Identity;  // per-frame
     Matrix projection_matrix = Matrix::Identity;    // per-frame
@@ -25,14 +25,24 @@ struct Uniforms
 };
 */
 
-void blinn_phong_vertex_shader(Vertex& input, const Uniforms& uniforms)
+VertexOut default_vertex_shader(const Vertex& input, const Uniform& uniform)
 {
-    input.pos = uniforms.MVP_matrix * input.pos;
-    // input.normal = 
-    // input.texcoord = 
+    VertexOut out;
+    std::cout << uniform.view_matrix * uniform.model_matrix * input.pos;
+    out.clip_pos = uniform.MVP_matrix * input.pos;
+    out.world_pos = uniform.model_matrix * input.pos;
+    // out.world_normal = 
+    out.texcoord = input.texcoord;
+
+    return out;
 }
 
-Vec3f blinn_phong_fragment_shader(const FragmentInput& input, const Uniforms& uniforms)
+RGBA blinn_phong_fragment_shader(const FragmentIn& input, const Uniform& uniform)
 {
-    return Vec3f(0);
+    return RGBA(0, 0, 0, 255);
+}
+
+RGBA wireframe_fragment_shader(const FragmentIn& input, const Uniform& uniform)
+{
+    return RGBA(0, 0, 0, 255); // Black
 }

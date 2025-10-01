@@ -7,8 +7,8 @@
 
 struct SubMesh
 {
-    uint32_t mesh_index_offset = 0;
-    uint32_t mesh_size = 0;
+    uint32_t offset = 0;
+    uint32_t size = 0;
     uint32_t material_index = 0;
     Transform local_transform;
 };
@@ -18,6 +18,9 @@ class Model
     
 public:
     Model() = default;
+
+    void set_pMesh(const Mesh& mesh);
+    void set_pMesh(const Mesh* mesh);
 
     const Mesh* get_pMesh() const;
     const Mesh& get_mesh() const;
@@ -29,14 +32,16 @@ public:
 
     void add_sub_mesh(SubMesh&);
 
+    void print() const;
+
 private:
 
     // Pointer to Data (in ResourceManager)
-    Mesh* pMesh_;
+    const Mesh* pMesh_;
+    Transform transform_;
     std::vector<Material*> pMaterials_;
 
     std::vector<SubMesh> sub_meshes_;
-    Transform transform_;
 };
 
 #endif

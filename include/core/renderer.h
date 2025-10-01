@@ -7,10 +7,11 @@
 #include "framebuffer.h"
 #include "camera.h"
 #include "scene.h"
-#include "render_states.h"
-#include "uniforms.h"
+#include "render_state.h"
+#include "uniform.h"
 #include "shader.h"
 #include "vertex.h"
+#include "rasterizer.h"
 
 class Renderer
 {
@@ -24,19 +25,19 @@ public:
     void draw_model(const Model&);   // For Test
     void draw_sub_mesh(const SubMesh&); // For Test
 
-    void update_per_frame_uniforms(const Camera&);   // call when frame start
-    void update_per_model_uniforms(const Model&);    // call when drawing model
-    void update_per_sub_mesh_uniforms(const SubMesh&);
+    void update_per_frame_uniform(const Camera&);   // call when frame start
+    void update_per_model_uniform(const Model&);    // call when drawing model
+    void update_per_sub_mesh_uniform(const SubMesh&);
 
     // pipeline
-    void draw_call(const Mesh& mesh, uint32_t offset, uint32_t size, const Material& material);
-    void rasterize();
+    void draw_call(const Mesh& mesh, uint32_t offset, uint32_t size, const Uniform&);
 
 
 private:
-    RenderStates render_states_;
-    Uniforms uniforms_;
+    RenderState render_state_;
+    Uniform uniform_;
     Shader shader_;
+    Rasterizer rasterizer_;
 };
 
 #endif

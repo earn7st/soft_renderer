@@ -1,24 +1,43 @@
 #include "engine.h"
 
+#include "model_importer.h"
+
 Engine::Engine(uint32_t w, uint32_t h) 
 : displayer_(), input_handler_(), resource_manager_(), scene_(), renderer_(), main_framebuffer_(w, h){}
 
-int Engine::start_up()
+int Engine::start_up(const std::string& model_filepath)
 {   
     // if(displayer_.start_up()) return -1;
     // if(input_handler_.start_up()) return -1;
-    if(!resource_manager_.initialize()) return -1;
-    std::cout << "Engine::start_up(): ResourceManager initialized successful!\n";
-    if(!scene_.initialize()) return -1;
-    std::cout << "Engine::start_up(): Scene initialized successful!\n";
-    if(!renderer_.initialize(main_framebuffer_)) return -1;
-    std::cout << "Engine::start_up(): Renderer initialized successful!\n";
+    if(!resource_manager_.initialize())
+    {
+        std::cout << "Engine::start_up(): ResourceManager initialize failed!\n";
+        return -1;
+    }
+    if(!scene_.initialize()) 
+    {
+        std::cout << "Engine::start_up(): Scene initialize failed!\n";
+        return -1;   
+    }
+    if(!renderer_.initialize(main_framebuffer_))
+    {
+        std::cerr << "Engine::start_up(): Renderer initialize failed!\n";
+        return -1;
+    }
+    
+    // TODO: Get file extension to specify importer type
+    std::unique_ptr<IModelImporter> importer;
+    importer = std::make_unique<ObjImporter>();
+    Model model = importer->import(model_filepath, resource_manager_);
+    scene_.add_model(model);
+    //model.print();
 
     return 0;
 }
 
 void Engine::run()
 {
+    int frame_cnt = 1;
     // Main Loop!
     bool running = true;
 
@@ -32,9 +51,13 @@ void Engine::run()
                 running = false;
             }
         }
-        displayer_.clear(0, 0, 0, 255);
+        displayer_.clear(16, 0, 16, 255);
 
-        renderer_.render(scene_);
+        if(frame_cnt > 0) 
+        {
+            frame_cnt--;
+            renderer_.render(scene_);
+        }
 
         displayer_.present(main_framebuffer_);
     }

@@ -1,4 +1,5 @@
 #include "resource_manager.h"
+#include "model_importer.h"
 
 bool ResourceManager::initialize()
 {
@@ -15,4 +16,14 @@ void ResourceManager::load_material(const Material& material)
     materials_.push_back(material);
 }
 
-//void ResourceManager::load_model_by_file_name()
+const Mesh& ResourceManager::get_mesh(int i)
+{
+    assert(i < meshes_.size());
+    return meshes_[i];
+}
+
+const Mesh* ResourceManager::get_pMesh(int i)
+{
+    assert(i < meshes_.size());
+    return &meshes_[i];
+}

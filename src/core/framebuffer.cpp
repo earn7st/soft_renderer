@@ -35,7 +35,7 @@ bool Framebuffer::set_color(uint32_t x, uint32_t y, RGBA color)
     return false;
 }
 
-void Framebuffer::print_info()
+void Framebuffer::print()
 {
     std::cout << "Framebuffer Info:" << std::endl;
     std::cout << width_ << " " << height_ << std::endl;

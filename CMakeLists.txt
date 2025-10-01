@@ -9,20 +9,24 @@ include_directories(
     include/core
     include/light
     include/shader
+    include/utils
 )
 add_executable(scrne
     src/main.cpp
     src/maths/matrix.cpp
+    src/core/camera.cpp
     src/core/displayer.cpp
     src/core/engine.cpp
     src/core/framebuffer.cpp
     src/core/input_handler.cpp
     src/core/material.cpp
     src/core/model.cpp
+    src/core/rasterizer.cpp
     src/core/renderer.cpp
     src/core/resource_manager.cpp
     src/core/scene.cpp
     src/core/shader.cpp
     src/core/texture.cpp
+    src/utils/model_importer.cpp
     )
 target_link_libraries(scrne PRIVATE ${SDL3_LIBRARY})

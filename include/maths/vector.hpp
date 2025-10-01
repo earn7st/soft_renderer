@@ -174,13 +174,16 @@ public:
     bool operator == (const Vector3<T>& v) const { return (x_ == v.x_ && y_ == v.y_ && z_ == v.z_ && w_ == v.w_); }
     bool operator != (const Vector3<T>& v) const { return (x_ != v.x_ || y_ != v.y_ || z_ != v.z_ || w_ != v.w_); }
 
+    template <typename U>
+    Vector4<T> operator / (const U& v) const { return Vector4<T>(x_/v, y_/v, z_/v, w_/v); }
+
 };
 
 template <typename T>
 inline
 std::ostream& operator << (std::ostream& os, Vector4<T> v)
 { 
-    return os << "(" << std::setw(4) << v.x_ << ", " << std::setw(4) << v.y_ << ", " << std::setw(4) << v.z_ << std::setw(4) << v.w_ << ")" << std::endl;
+    return os << "(" << std::setw(4) << v.x_ << ", " << std::setw(4) << v.y_ << ", " << std::setw(4) << v.z_ << ", " << std::setw(4) << v.w_ << ")" << std::endl;
 }
 
 typedef Vector4<int> Vec4i;

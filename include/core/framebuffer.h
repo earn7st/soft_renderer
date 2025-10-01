@@ -19,7 +19,7 @@ public:
 
     bool set_color(uint32_t x, uint32_t y, RGBA color);
 
-    void print_info();
+    void print();
 
 private:
     bool initialized = false;
