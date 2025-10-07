@@ -101,27 +101,21 @@ inline Matrix operator * (const Matrix& mat1, const Matrix& mat2)
     return result_mat;
 }
 
+// LH -> RH
 template <typename T>
 inline Matrix lookAt(const Vector3<T>& eye, const Vector3<T>& center, const Vector3<T>& up)
 {
-    Vector3<T> z_view = normalize(eye - center);
+    Vector3<T> f = normalize(center - eye);
 
-    Vector3<T> x_view = normalize(cross(up, z_view));
-    Vector3<T> y_view = cross(z_view, x_view);
-
+    Vector3<T> s = normalize(cross(up, f));
+    Vector3<T> u = cross(f, s);
+    
     Matrix result_mat(
-        x_view.x_, x_view.y_, x_view.z_, -eye.x_,
-        y_view.x_, y_view.y_, y_view.z_, -eye.y_,
-        z_view.x_, z_view.y_, z_view.z_, -eye.z_,
+        s.x_, s.y_, s.z_, -dot(s, eye),
+        u.x_, u.y_, u.z_, -dot(u, eye),
+        -f.x_, -f.y_, -f.z_, dot(f, eye),
         0, 0, 0, 1
     );
-
-    // Matrix result_mat(
-    //     x_view.x_, y_view.x_, z_view.x_, -eye.x_,
-    //     x_view.y_, y_view.y_, z_view.y_, -eye.y_,
-    //     x_view.z_, y_view.z_, z_view.z_, -eye.z_,
-    //     0, 0, 0, 1
-    // );
 
     return result_mat;
 }

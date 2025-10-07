@@ -28,8 +28,6 @@ void print(const Mesh& mesh)
 void print(const Uniform& uniform)
 {
     std::cout << "---- uniform info ----" << std::endl;
-    std::cout << "screen_width: " << uniform.screen_width << " screen_height: " << uniform.screen_height << std::endl;
-    std::cout << "viewport_matrix: " << uniform.viewport_matrix << std::endl;
     std::cout << "view_matrix: " << uniform.view_matrix << std::endl; 
     std::cout << "projection_matrix: " << uniform.projection_matrix << std::endl;
     std::cout << "VP_matrix: " << uniform.VP_matrix << std::endl;

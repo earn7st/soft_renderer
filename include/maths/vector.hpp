@@ -37,8 +37,6 @@ public:
     template <typename U>
     Vector2<T>& operator *= (const U d) { x_ *= d, y_ *= d; return *this; }
 
-    Vector2<T>& dot(const Vector2<T>& v) { x_ *= v.x_, y_ *= v.y_; return *this; }
-
     double length2() const { return x_ * x_ + y_ * y_; }
     double length() const { return sqrt(length2()); }
     void normalize() { double len = this->length(); x_ /= len, y_ /= len; }
@@ -55,7 +53,7 @@ Vector2<T> normalized(const Vector2<T>& v)
 
 template <typename T>
 inline 
-Vector2<T> dot(const Vector2<T>& v1, const Vector2<T>& v2) { return Vector2<T>(v1.x_ * v2.x_, v1.y_ * v2.y_); }
+T dot(const Vector2<T>& v1, const Vector2<T>& v2) { return v1.x_ * v2.x_ + v1.y_ * v2.y_; }
 
 template <typename T>
 inline 
@@ -108,8 +106,6 @@ public:
     Vector3<T> operator / (const U& v) const { return Vector3<T>(x_ / v, y_ / v, z_ / v); }
     template <typename U>
     Vector3<T>& operator /= (const U& v) { x_ /= v, y_ /= v, z_ /= v; return *this; }
-    
-    Vector3<T>& dot(const Vector3<T> v) { x_ *= v.x_, y_ *= v.y_, z_ *= v.z_; }
 
     double length2() const { return x_ * x_ + y_ * y_ + z_ * z_; }
     double length() const { return sqrt(length2()); }
@@ -126,7 +122,7 @@ Vector3<T> normalize(const Vector3<T>& v)
 
 template <typename T>
 inline
-Vector3<T> dot(const Vector3<T>& v1, const Vector3<T>& v2) { return Vector3<T>(v1.x_ * v2.x_, v1.y_ * v2.y_, v1.z_ * v2.z_); }
+T dot(const Vector3<T>& v1, const Vector3<T>& v2) { return v1.x_ * v2.x_ + v1.y_ * v2.y_ + v1.z_ * v2.z_; }
 
 template <typename T>
 inline

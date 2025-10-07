@@ -28,7 +28,6 @@ struct Uniform
 VertexOut default_vertex_shader(const Vertex& input, const Uniform& uniform)
 {
     VertexOut out;
-    std::cout << uniform.view_matrix * uniform.model_matrix * input.pos;
     out.clip_pos = uniform.MVP_matrix * input.pos;
     out.world_pos = uniform.model_matrix * input.pos;
     // out.world_normal = 

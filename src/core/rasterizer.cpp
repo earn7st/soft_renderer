@@ -7,22 +7,20 @@ void Rasterizer::rasterize(const Varying& v0, const Varying& v1, const Varying& 
     Vec4f v1_ndc_pos = v1.clip_pos / v1.clip_pos.w_;
     Vec4f v2_ndc_pos = v2.clip_pos / v2.clip_pos.w_;
 
-    // std::cout << "ndc pos: \n";
-    // std::cout << v0_ndc_pos << " " << v1_ndc_pos << " " << v2_ndc_pos << std::endl;
-
     // Viewport Transform
-    Vec2f v0_screen_pos = viewport_transform(uniform.viewport_matrix, v0_ndc_pos);
-    Vec2f v1_screen_pos = viewport_transform(uniform.viewport_matrix, v1_ndc_pos);
-    Vec2f v2_screen_pos = viewport_transform(uniform.viewport_matrix, v2_ndc_pos);
+    uint32_t width = render_state.pTarget_framebuffer->get_width();
+    uint32_t height = render_state.pTarget_framebuffer->get_height();
 
-    // std::cout << "screen pos: \n";
-    // std::cout << v0_screen_pos << " " << v1_screen_pos << " " << v2_screen_pos << std::endl;
+    Vec2f v0_screen_pos = viewport_transform(v0_ndc_pos, width, height);
+    Vec2f v1_screen_pos = viewport_transform(v1_ndc_pos, width, height);
+    Vec2f v2_screen_pos = viewport_transform(v2_ndc_pos, width, height);
+
 
     // LINE
     if (render_state.polygon_mode == LINE)
     {
-        draw_line(v0_screen_pos, v1_screen_pos, shader, render_state);
-        draw_line(v1_screen_pos, v2_screen_pos, shader, render_state);
+        //draw_line(v0_screen_pos, v1_screen_pos, shader, render_state);
+        //draw_line(v1_screen_pos, v2_screen_pos, shader, render_state);
         draw_line(v2_screen_pos, v0_screen_pos, shader, render_state);
 
     } else if (render_state.polygon_mode == FILL)
@@ -48,10 +46,17 @@ void Rasterizer::rasterize(const Varying& v0, const Varying& v1, const Varying& 
     return ;
 }
 
-Vec2f Rasterizer::viewport_transform(const Matrix& mat, const Vec4f& v)
+// flip vertically
+// Left Up corner as (0, 0)
+Vec2f Rasterizer::viewport_transform(const Vec4f& v, uint32_t screen_width, uint32_t screen_height)
 {
-    Vec4f tmp = mat * v;
-    return Vec2f(tmp.x_, tmp.y_);
+    float ndc_x = v.x_;
+    float ndc_y = v.y_;
+
+    float screen_x = (v.x_ + 1) * screen_width * 0.5f;
+    float screen_y = (1 - v.y_) * screen_height * 0.5f;
+
+    return Vec2f(screen_x, screen_y);
 }
 
 void Rasterizer::draw_line(const Vec2f& v0, const Vec2f& v1, const Shader& shader, const RenderState& render_state)
@@ -71,39 +76,43 @@ void Rasterizer::_draw_line_bresenham(const Vec2f& v0, const Vec2f& v1, const Sh
     FragmentIn dummy_fragin = FragmentIn();
     Uniform dummy_uniform = Uniform();
 
-    int x0 = int(v0.x_);
-    int y0 = int(v0.y_);
-    int x1 = int(v1.x_);
-    int y1 = int(v1.y_);
-    if(x0 > x1)
-    {
-        std::swap(x0, x1);
-        std::swap(y0, y1);
-    }
+    int x0 = int(v0.x_), y0 = int(v0.y_);
+    int x1 = int(v1.x_), y1 = int(v1.y_);
 
-    int sy = y0 < y1 ? 1 : -1;
-    int x = x0, y = y0;
+    int cx = x0 < x1 ? 1 : -1;
+    int cy = y0 < y1 ? 1 : -1;
     int cnt = 0;
-    int dy = y1 - y0;
-    int dx = x1 - x0;
+    int dy = abs(y1 - y0);
+    int dx = abs(x1 - x0);
 
-    if(abs(y1 - y0) < abs(x1 - x0)){
-        while(x < std::min(x1, width - 1))
+    int x = x0, y = y0;
+
+    if(dy < dx){
+        for(; cx > 0 ? x <= std::min(width - 1, x1) : x >= std::max(0, x1); x += cx)
         {
-            x++;
-            cnt += sy * 2 * dy;
-            if(cnt >= 2 * dx)
-            {
-                cnt -= 2 * dx;
-            }
+            cnt += 2 * dy;
+            
             if(cnt >= dx)
             {
-                y += sy;
+                y += cy;
+                cnt -= 2 * dx;
             }
             RGBA color = shader.execute_fragment_shader(dummy_fragin, dummy_uniform);
             fb->set_color(x, y, color);
         }
     } else {
+        for(; cy > 0 ? y <= std::min(height - 1, y1) : y >= std::max(0, y1); y += cy)
+        {
+            cnt += 2 * dx;
+            
+            if(cnt >= dy)
+            {
+                x += cx;
+                cnt -= 2 * dy;
+            }
+            RGBA color = shader.execute_fragment_shader(dummy_fragin, dummy_uniform);
+            fb->set_color(x, y, color);
+        }
     }
 
     return ;

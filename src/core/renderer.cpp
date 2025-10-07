@@ -19,14 +19,6 @@ bool Renderer::attach_framebuffer(Framebuffer& fb)
     if(fb.is_valid())
     {
         render_state_.pTarget_framebuffer = &fb;
-        uniform_.screen_width = fb.get_width();
-        uniform_.screen_height = fb.get_height();
-        float width = static_cast<float>(uniform_.screen_width);
-        float height = static_cast<float>(uniform_.screen_height);
-        uniform_.viewport_matrix = Matrix(width/2, 0, 0, width/2,
-                                            0, height/2, 0, height/2,
-                                            0, 0, 1, 0,
-                                            0, 0, 0, 1);
         return true;
     }
     return false;
@@ -87,8 +79,6 @@ void Renderer::draw_call(const Mesh& mesh, uint32_t offset, uint32_t size, const
         Varying v1 = shader_.execute_vertex_shader(ori_v1, uniform_);
         Varying v2 = shader_.execute_vertex_shader(ori_v2, uniform_);
 
-        std::cout << v0.clip_pos << " " << v1.clip_pos << " " << v2.clip_pos << std::endl;
-
         // (Optional) Geometry Shading
         // (Optional) Culling
         // (Optional) Clipping
@@ -111,7 +101,8 @@ void Renderer::update_per_frame_uniform(const Camera& camera)
 void Renderer::update_per_model_uniform(const Model& model)
 {
     // TODO
-    uniform_.model_matrix = Matrix::Identity;
+    //uniform_.model_matrix = Matrix::Identity;
+    uniform_.model_matrix = Matrix(25, 0, 0, 0, 0, 25, 0, -2, 0, 0, 25, 0, 0, 0, 0, 1);
     uniform_.MVP_matrix = uniform_.VP_matrix * uniform_.model_matrix;
 }
 

@@ -5,9 +5,6 @@
 
 struct Uniform
 {
-    uint32_t screen_width, screen_height;
-    Matrix viewport_matrix = Matrix::Identity;    // change when framebuffer change, update in attach_framebuffer()
-
     // per-frame
     Matrix view_matrix = Matrix::Identity;  
     Matrix projection_matrix = Matrix::Identity;    
