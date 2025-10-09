@@ -30,7 +30,6 @@ int Engine::start_up(const std::string& model_filepath)
     importer = std::make_unique<ObjImporter>();
     Model model = importer->import(model_filepath, resource_manager_);
     scene_.add_model(model);
-    //model.print();
 
     return 0;
 }
@@ -51,11 +50,14 @@ void Engine::run()
                 running = false;
             }
         }
-        displayer_.clear(16, 0, 16, 255);
+
+        
 
         if(frame_cnt > 0) 
         {
             frame_cnt--;
+            main_framebuffer_.clear();
+            
             renderer_.render(scene_);
         }
 

@@ -170,6 +170,9 @@ public:
     bool operator == (const Vector3<T>& v) const { return (x_ == v.x_ && y_ == v.y_ && z_ == v.z_ && w_ == v.w_); }
     bool operator != (const Vector3<T>& v) const { return (x_ != v.x_ || y_ != v.y_ || z_ != v.z_ || w_ != v.w_); }
 
+    Vector4<T> operator + (const Vector4<T>& v) { return Vector4<T>(x_ + v.x_, y_ + v.y_, z_ + v.z_, w_ + v.w_); }
+    Vector4<T>& operator += (const Vector4<T>& v) { x_ += v.x_, y_ += v.y_, z_ += v.z_, w_ += v.w_; return *this; }
+
     template <typename U>
     Vector4<T> operator / (const U& v) const { return Vector4<T>(x_/v, y_/v, z_/v, w_/v); }
 

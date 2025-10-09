@@ -18,6 +18,7 @@ public:
     const uint32_t* get_pixels() const;
 
     bool set_color(uint32_t x, uint32_t y, RGBA color);
+    RGBA get_color(uint32_t x, uint32_t y);
 
     void print();
 

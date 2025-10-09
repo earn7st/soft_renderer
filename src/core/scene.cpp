@@ -2,6 +2,11 @@
 
 bool Scene::initialize() 
 {
+    // add model
+    // scene_.add_model(model);
+
+    // add light
+
     return true;
 }
 

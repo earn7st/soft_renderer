@@ -57,13 +57,6 @@ int Displayer::init_SDL()
     return 0;
 }
 
-void Displayer::clear(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
-{
-    // printf("Displayer::clear() called\n");
-    SDL_SetRenderDrawColorFloat(renderer_, r, g, b, a);
-    SDL_RenderClear(renderer_);
-}
-
 bool Displayer::present(const Framebuffer& fb)
 {
     if(!check_framebuffer_size(fb))

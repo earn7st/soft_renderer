@@ -17,6 +17,10 @@ struct Uniform
     // per-submesh
     Matrix sub_mesh_matrix = Matrix::Identity;  // local transform
     Matrix MVP_matrix = Matrix::Identity;
+
+    // material
+
+    // lighting
 };
 
 #endif

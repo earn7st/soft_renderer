@@ -17,10 +17,9 @@ enum ShaderType
 
 struct RenderState
 {
-    Framebuffer* pTarget_framebuffer;
-    PolygonMode polygon_mode = LINE;
+    PolygonMode polygon_mode = FILL;
 
-    ShaderType shader_type;
+    ShaderType shader_type = BLINN_PHONG;
 };
 /*
 参考 by deepseek

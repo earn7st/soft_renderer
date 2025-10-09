@@ -20,7 +20,6 @@ public:
     ~Displayer();
 
     int init_SDL();    
-    void clear(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
     bool present(const Framebuffer&);
 
     bool check_framebuffer_size(const Framebuffer&);

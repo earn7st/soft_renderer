@@ -13,6 +13,7 @@ struct Varying
     Vec4f world_pos;
     Vec4f world_normal;
     Vec2f texcoord;
+    float clip_w;
 };
 
 typedef Varying VertexOut;
